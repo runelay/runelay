@@ -18,7 +18,7 @@
     "@modelcontextprotocol/sdk": "^1.32.2",
     "@runelay/shared": "workspace:*",
     "better-auth": "1.7.25",
-    "hono": "^4.10.7",
+    "hono": "^4.13.19",
     "quickjs-emscripten": "^0.32.0",
     "zod": "^4.6.7"
   }
