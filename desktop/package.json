@@ -1,7 +1,7 @@
 {
   "name": "runelay-desktop",
   "productName": "runelay",
-  "version": "0.6.10",
+  "version": "0.6.11",
   "description": "One MCP endpoint for every account, skill and memory your agents use.",
   "author": "Anderson Medeiros",
   "license": "MIT",

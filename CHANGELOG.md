@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v0.6.11
+
+### Web
+
+- The Installed list in the sidebar groups extra accounts of the same connector (`gmail` and `gmail_2`) under one row with the account count. The group opens on click, or on its own when you are on one of its accounts, and its status dot shows the worst status among them. Google accounts show their email.
+
 ## v0.6.10
 
 ### Security

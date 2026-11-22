@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Skills: your SKILL.md folders, served to every agent · Runelay</title>
+    <meta name="description" content="Keep SKILL.md folders in Runelay. Claude Code, Codex, Cursor and any MCP client find them and read them only when they need them." />
+    
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Runelay" />
+    <meta property="og:title" content="Skills: your SKILL.md folders, served to every agent · Runelay" />
+    <meta property="og:description" content="Keep SKILL.md folders in Runelay. Claude Code, Codex, Cursor and any MCP client find them and read them only when they need them." />
+    <meta property="og:url" content="https://runelay.com/features/skills/" />
+    <meta property="og:image" content="https://runelay.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@andersonbrdev" />
+    <meta name="twitter:image" content="https://runelay.com/og.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href="https://runelay.com/features/skills/" />
+    <link rel="alternate" hreflang="en" href="https://runelay.com/features/skills/" />
+    <link rel="alternate" hreflang="pt-BR" href="https://runelay.com/pt-br/features/skills/" />
+    <link rel="alternate" hreflang="x-default" href="https://runelay.com/features/skills/" />
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Will runelay pull overwrite my own skills?","acceptedAnswer":{"@type":"Answer","text":"No. It only updates folders that carry the .runelay marker. A folder without it is yours."}},{"@type":"Question","name":"Which folders does runelay push read?","acceptedAnswer":{"@type":"Answer","text":"~/.claude/skills, ~/.agents/skills, ~/.codex/skills, ~/.cursor/skills, ~/.grok/skills, ~/.gemini/skills and ~/.config/opencode/skills. Duplicates are merged."}}]}</script>
+    <script>document.documentElement.classList.add("js");</script>
+    <script type="module" src="/main.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/"><img src="/favicon.svg" width="36" height="36" alt="" />runelay</a>
+      <nav class="nav-links" aria-label="Main"><a href="/setup/" class="nav-secondary">Setup</a><a href="/#about" class="nav-secondary">About</a><a href="/integrations/" class="nav-secondary">Integrations</a><a href="/benchmark/" class="nav-secondary">Benchmark</a><a href="/download/">Download</a>
+      <a class="button-solid small" href="https://github.com/Andsu-dev/runelay"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z"/></svg>GitHub</a></nav>
+    </header>
+
+    <main class="page bench-page guide">
+      <section class="hero bench-hero">
+        <p class="bench-eyebrow" data-reveal><span class="vs"><img src="/favicon.svg" width="16" height="16" alt="" />runelay</span><span class="dot"></span>Feature · Skills</p>
+        <h1 data-reveal>Skills that travel</h1>
+        <p class="lead" data-reveal>Keep your SKILL.md folders in one place. Any agent finds them and reads them only when it needs them.</p>
+        <div class="shot-hero feature-hero"><canvas class="hero-pixels" aria-hidden="true"></canvas><div class="shot-stage"><div class="shot-frame"><div class="shot-app" data-showcase="hero" data-route="/skills" role="region" aria-label="Interactive preview of the runelay skills"></div></div></div></div>
+      </section>
+
+      <section class="bench">
+        <div class="feature-rows"><div class="feature-row" data-reveal><div class="feature-text"><h2>Served on demand</h2><p>Agents read a skill with <code>read_skill</code> and its extra files with <code>read_skill_file</code>. <code>search_context</code> runs a full-text search across skills and memories, so a skill only enters the context when it matters.</p></div><div class="feature-media"><div class="bento-stage" data-showcase="skills-grid" role="region" aria-label="Skills list"></div></div></div><div class="feature-row" data-reveal><div class="feature-text"><h2>On or off, per skill</h2><p>Every skill has a switch in the panel. Turn one off and it drops out of agent search and the brief, without deleting the folder.</p></div><div class="feature-media"><div class="bento-stage" data-showcase="skills" role="region" aria-label="Skill switches"></div></div></div><div class="feature-row solo" data-reveal><div class="feature-text"><h2>Lands in your local folders</h2><p><code>runelay push</code> imports skills from Claude Code, Codex, Cursor, Grok, Gemini and OpenCode. <code>runelay pull</code> writes enabled skills you do not have locally to <code>~/.claude/skills/&lt;slug&gt;/</code> with a <code>.runelay</code> marker. A folder without the marker is yours and is never overwritten.</p><div class="cmd"><code><span class="prompt">$</span>runelay sync</code><button class="copy" type="button" data-copy="runelay sync" data-copied="Copied">Copy</button></div></div></div></div>
+        <section class="page-section" data-reveal><h2 class="section-title">Questions</h2><div class="faq faq-list"><details><summary>Will runelay pull overwrite my own skills?<svg class="chevron" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="answer"><p>No. It only updates folders that carry the .runelay marker. A folder without it is yours.</p></div></details><details><summary>Which folders does runelay push read?<svg class="chevron" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></summary><div class="answer"><p>~/.claude/skills, ~/.agents/skills, ~/.codex/skills, ~/.cursor/skills, ~/.grok/skills, ~/.gemini/skills and ~/.config/opencode/skills. Duplicates are merged.</p></div></details></div></section>
+        <div class="bench-cta" data-reveal>
+          <div class="bench-cta-copy"><strong>Try it on your machine</strong><span>Free and open source. Runs on your computer or your server.</span></div>
+          <span class="cta"><a class="button-solid small" href="/download/"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M8 2.5v8m0 0 3-3m-3 3-3-3M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Download runelay</a><a class="button-dashed small" href="/setup/"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 4.5h15a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1Zm0 9h15a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1ZM7 7.5h.01M7 16.5h.01"/></svg>Install on your server</a></span>
+        </div>
+        <nav class="guides page-section" aria-label="Keep reading" data-reveal><h2 class="section-title">Keep reading</h2><div class="guide-list"><a class="guide-card" href="/features/memory/"><span class="brow-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 4.5a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0-2 4 2.5 2.5 0 0 0 1 4 2.5 2.5 0 0 0 3.5 3.5 2 2 0 0 0 2.5-1.5V6a2 2 0 0 0-2.5-1.5Zm5 0A2.5 2.5 0 0 1 17 7a2.5 2.5 0 0 1 2 4 2.5 2.5 0 0 1-1 4 2.5 2.5 0 0 1-3.5 3.5 2 2 0 0 1-2.5-1.5"/></svg></span><span class="guide-text"><strong>Shared memory</strong><small>Linked, versioned notes every agent reads and writes.</small></span><span class="guide-arrow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m0 0-5-5m5 5-5 5"/></svg></span></a><a class="guide-card" href="/features/agents/"><span class="brow-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="m7.5 9.5 3 2.5-3 2.5M13 15h3.5"/></svg></span><span class="guide-text"><strong>Works with every agent</strong><small>One endpoint, one key per agent.</small></span><span class="guide-arrow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m0 0-5-5m5 5-5 5"/></svg></span></a><a class="guide-card" href="/docs/migrate/"><span class="brow-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v11m0 0 4-4m-4 4-4-4M4.5 16.5v2a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-2"/></svg></span><span class="guide-text"><strong>runelay migrate</strong><small>Import MCP servers, memories and skills from the agents you already use.</small></span><span class="guide-arrow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m0 0-5-5m5 5-5 5"/></svg></span></a></div></nav>
+      </section>
+    </main>
+  </body>
+</html>

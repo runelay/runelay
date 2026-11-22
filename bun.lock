@@ -12,7 +12,7 @@
     },
     "apps/api": {
       "name": "@runelay/api",
-      "version": "0.6.10",
+      "version": "0.6.11",
       "dependencies": {
         "@better-auth/api-key": "1.7.25",
         "@hono/bun": "^1.0.1",
@@ -28,7 +28,7 @@
     },
     "apps/cli": {
       "name": "@runelay/cli",
-      "version": "0.6.10",
+      "version": "0.6.11",
       "bin": {
         "runelay": "src/index.ts",
       },
@@ -39,11 +39,11 @@
     },
     "apps/oauth-broker": {
       "name": "@runelay/oauth-broker",
-      "version": "0.6.10",
+      "version": "0.6.11",
     },
     "apps/web": {
       "name": "@runelay/web",
-      "version": "0.6.10",
+      "version": "0.6.11",
       "dependencies": {
         "@hugeicons/core-free-icons": "^4.2.3",
         "@hugeicons/react": "^1.1.9",
@@ -74,7 +74,7 @@
     },
     "packages/shared": {
       "name": "@runelay/shared",
-      "version": "0.6.10",
+      "version": "0.6.11",
       "dependencies": {
         "zod": "^4.6.7",
       },
