@@ -11,14 +11,14 @@
     "test": "bun test --coverage"
   },
   "dependencies": {
-    "@better-auth/api-key": "1.7.25",
+    "@better-auth/api-key": "1.7.28",
     "@hono/bun": "^1.0.1",
     "@hono/zod-validator": "^0.9.1",
     "@jitl/quickjs-wasmfile-release-sync": "0.32.0",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "@runelay/shared": "workspace:*",
-    "better-auth": "1.7.25",
-    "hono": "^4.13.19",
+    "better-auth": "1.7.28",
+    "hono": "^4.13.22",
     "quickjs-emscripten": "^0.32.0",
     "zod": "^4.6.7"
   }
