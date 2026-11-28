@@ -1,6 +1,12 @@
 import type { ContextClient } from "@runelay/shared";
 import { cliEnv } from "@/config/env";
-import type { AgentDirectory, InstructionFile, InstructionTarget, InstructionTargetDirs } from "@/types/context.types";
+import type {
+  AgentDirectory,
+  InstructionFile,
+  InstructionTarget,
+  InstructionTargetDirs,
+  SkillTarget,
+} from "@/types/context.types";
 
 const HOME = cliEnv.RUNELAY_HOME;
 
@@ -10,18 +16,45 @@ export const CLAUDE_PROJECTS_DIR = `${HOME}/.claude/projects`;
 
 export const CURRENT_PROJECT_MEMORY_DIR = `${CLAUDE_PROJECTS_DIR}/${process.cwd().replaceAll("/", "-")}/memory`;
 
+export const skillTargetsFor = (home: string, dirs: Pick<InstructionTargetDirs, "configHome"> = {}): SkillTarget[] => {
+  const configHome = dirs.configHome ?? `${home}/.config`;
+  return [
+    { id: "claude", agent: "Claude Code", path: `${home}/.claude/skills` },
+    { id: "agents", agent: "Agents (universal)", path: `${home}/.agents/skills` },
+    { id: "codex", agent: "Codex", path: `${home}/.codex/skills` },
+    { id: "cursor", agent: "Cursor", path: `${home}/.cursor/skills` },
+    { id: "grok", agent: "Grok", path: `${home}/.grok/skills` },
+    { id: "gemini", agent: "Gemini", path: `${home}/.gemini/skills` },
+    {
+      id: "antigravity",
+      agent: "Antigravity",
+      path: `${home}/.gemini/config/skills`,
+      detect: [`${home}/.gemini/config`, `${home}/.gemini/antigravity`],
+    },
+    { id: "opencode", agent: "OpenCode", path: `${configHome}/opencode/skills` },
+  ];
+};
+
+export const SKILL_TARGETS: SkillTarget[] = skillTargetsFor(HOME, {
+  configHome: cliEnv.XDG_CONFIG_HOME,
+});
+
+const deduplicateDirectories = (entries: AgentDirectory[]): AgentDirectory[] => {
+  const seen = new Set<string>();
+  return entries.filter(({ path }) => {
+    if (seen.has(path)) return false;
+    seen.add(path);
+    return true;
+  });
+};
+
 export const SKILL_SOURCES: AgentDirectory[] = cliEnv.RUNELAY_SKILLS_DIR
   ? [{ agent: "Custom", path: cliEnv.RUNELAY_SKILLS_DIR }]
-  : [
-      { agent: "Claude Code", path: `${HOME}/.claude/skills` },
-      { agent: "Agents (universal)", path: `${HOME}/.agents/skills` },
-      { agent: "Codex", path: `${HOME}/.codex/skills` },
-      { agent: "Cursor", path: `${HOME}/.cursor/skills` },
+  : deduplicateDirectories([
+      ...SKILL_TARGETS.map(({ agent, path }) => ({ agent, path })),
       { agent: "Cursor", path: `${HOME}/.cursor/skills-cursor` },
-      { agent: "Grok", path: `${HOME}/.grok/skills` },
-      { agent: "Gemini", path: `${HOME}/.gemini/skills` },
-      { agent: "OpenCode", path: `${OPENCODE_DIR}/skills` },
-    ];
+      { agent: "Antigravity", path: `${HOME}/.gemini/antigravity-cli/skills` },
+    ]);
 
 export const EXTRA_MEMORY_SOURCES: AgentDirectory[] = [{ agent: "Codex", path: `${HOME}/.codex/memories` }];
 

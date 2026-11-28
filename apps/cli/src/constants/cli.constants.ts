@@ -49,13 +49,21 @@ export const COMMAND_GUIDE = {
     details: "--yes skips the confirmation, --replace leaves only runelay in the agents",
   },
   push: { usage: "push", summary: "Send memories, skills and instructions from your local agents" },
-  pull: { usage: "pull", summary: "Write the runelay rule to every agent's global instructions and fetch new skills" },
+  pull: {
+    usage: "pull",
+    summary: "Write the runelay rule to every agent's global instructions and fetch new skills",
+    details: "--agents claude,codex,cursor,grok,gemini,antigravity,opencode,agents | --skills-dir <path>",
+  },
   skills: {
     usage: "skills add <source>",
     summary: "Add a skill from GitHub, skills.sh or a local file",
     details: "--skill <name or path> picks a skill, --list shows what's available",
   },
-  sync: { usage: "sync", summary: "push, then pull" },
+  sync: {
+    usage: "sync",
+    summary: "push, then pull",
+    details: "accepts the same --agents and --skills-dir flags as pull",
+  },
   status: { usage: "status", summary: "Show the server, your account and what is stored in it" },
   doctor: { usage: "doctor", summary: "Check that your agents use only runelay for memory and skills" },
   open: { usage: "open", summary: "Open the runelay dashboard in the browser" },

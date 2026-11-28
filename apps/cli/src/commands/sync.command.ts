@@ -1,16 +1,18 @@
 import { ok, type Result } from "@runelay/shared";
-import { describeSkillCounts, runPull } from "@/commands/pull.command";
+import { describeSkillCounts, parsePullOptions, runPull } from "@/commands/pull.command";
 import { describePushCounts, runPush } from "@/commands/push.command";
 import { plural } from "@/lib/format";
 import { printCard } from "@/lib/ui";
 import { resolveConnection } from "@/services/config.service";
 
-export const syncCommand = async (): Promise<Result<null>> => {
+export const syncCommand = async (args: string[] = []): Promise<Result<null>> => {
+  const parsed = parsePullOptions(args);
+  if (parsed.error) return parsed;
   const connection = resolveConnection();
   if (connection.error) return connection;
   const pushed = await runPush(connection.data);
   if (pushed.error) return pushed;
-  const pulled = await runPull(connection.data);
+  const pulled = await runPull(connection.data, parsed.data);
   printCard({
     title: "Synced",
     stats: [

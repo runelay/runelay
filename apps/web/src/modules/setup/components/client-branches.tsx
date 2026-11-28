@@ -65,7 +65,7 @@ export function ClientBranches() {
         />
       </svg>
       <div className="flex flex-col gap-3">
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
           {MANUAL_SNIPPETS.map((snippet, order) => (
             <ClientChip
               key={snippet.client}

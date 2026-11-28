@@ -2,19 +2,43 @@ import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync 
 import { dirname, join, resolve, sep } from "node:path";
 import {
   attemptSync,
+  fail,
   ok,
   type Result,
   SKILL_EXPORT_LIMIT,
   type SkillExportView,
   type SkillListItemView,
 } from "@runelay/shared";
+import { cliEnv } from "@/config/env";
 import { SKILL_MARKER_FILE, SKILLS_TARGET_DIR } from "@/constants/cli.constants";
-import { SKILL_ENTRY_FILE, SKILL_SOURCES } from "@/constants/context.constants";
+import { SKILL_ENTRY_FILE, SKILL_TARGETS } from "@/constants/context.constants";
 import { chunk } from "@/lib/chunk";
-import { listLocalSkillSlugs } from "@/services/context-reader.service";
 import { exportSkills, listEnabledSkills } from "@/services/runelay-api.service";
 import type { Connection } from "@/types/config.types";
-import type { SkillPullResult } from "@/types/skill-pull.types";
+import type { SkillTarget } from "@/types/context.types";
+import type { SkillTargetPullSummary } from "@/types/skill-pull.types";
+
+export interface SkillMaterializeDeps {
+  listEnabledSkills: (connection: Connection) => Promise<Result<SkillListItemView[]>>;
+  exportSkills: (connection: Connection, slugs: string[]) => Promise<Result<SkillExportView[]>>;
+}
+
+export interface ResolveSkillTargetsOptions {
+  customDir?: string;
+  agents?: readonly string[];
+  targets?: readonly SkillTarget[];
+  fallbackDir?: string;
+  dirExists?: (path: string) => boolean;
+}
+
+export interface MaterializeSkillsOptions extends ResolveSkillTargetsOptions {
+  deps?: SkillMaterializeDeps;
+}
+
+const DEFAULT_DEPS: SkillMaterializeDeps = {
+  listEnabledSkills,
+  exportSkills,
+};
 
 const markerOf = (directory: string) => {
   const marker = join(directory, SKILL_MARKER_FILE);
@@ -48,48 +72,121 @@ const replaceFolder = (target: string, skill: SkillExportView) =>
     return null;
   }, "STORAGE_FAILED");
 
-type PendingSkill = { skill: SkillListItemView; target: string; exists: boolean };
-
-type PullPlan = PendingSkill | SkillPullResult;
-
-const planSkill = (skill: SkillListItemView, localSlugs: Set<string>): PullPlan => {
-  const target = insideOf(SKILLS_TARGET_DIR, skill.slug);
-  if (!target) return { slug: skill.slug, outcome: "failed", message: "invalid folder name" };
-  const exists = existsSync(target);
-  const marker = exists ? markerOf(target) : null;
-  if ((exists && marker === null) || (!exists && localSlugs.has(skill.slug)))
-    return { slug: skill.slug, outcome: "local" };
-  if (marker === skill.updatedAt) return { slug: skill.slug, outcome: "unchanged" };
-  return { skill, target, exists };
-};
-
-const writeBatch = async (connection: Connection, batch: PendingSkill[]): Promise<SkillPullResult[]> => {
-  const exported = await exportSkills(
-    connection,
-    batch.map(({ skill }) => skill.slug),
-  );
-  if (exported.error)
-    return batch.map(({ skill }) => ({ slug: skill.slug, outcome: "failed", message: exported.error.message }));
-  const bySlug = new Map(exported.data.map((skill) => [skill.slug, skill]));
-  return batch.map(({ skill, target, exists }) => {
-    const full = bySlug.get(skill.slug);
-    if (!full) return { slug: skill.slug, outcome: "failed", message: "skill is no longer on the server" };
-    const written = replaceFolder(target, full);
-    if (written.error) return { slug: skill.slug, outcome: "failed", message: written.error.message };
-    return { slug: skill.slug, outcome: exists ? "updated" : "created" };
+export const resolveSkillTargets = ({
+  customDir = cliEnv.RUNELAY_SKILLS_DIR,
+  agents,
+  targets = SKILL_TARGETS,
+  fallbackDir = SKILLS_TARGET_DIR,
+  dirExists = existsSync,
+}: ResolveSkillTargetsOptions = {}): Result<SkillTarget[]> => {
+  if (customDir) return ok([{ id: "custom", agent: "Custom", path: customDir }]);
+  if (agents && agents.length > 0) {
+    const byId = new Map(targets.map((target) => [target.id as string, target]));
+    const unknown = agents.filter((agent) => !byId.has(agent));
+    if (unknown.length > 0) {
+      const valid = [...byId.keys()].join(", ");
+      return fail("INVALID_INPUT", `Unknown agent: ${unknown.join(", ")}. Use: ${valid}`);
+    }
+    const unique = [...new Set(agents)].flatMap((agent) => {
+      const found = byId.get(agent);
+      return found ? [found] : [];
+    });
+    return ok(unique);
+  }
+  const detected = targets.filter((target) => {
+    const probes = target.detect ?? [dirname(target.path)];
+    return probes.some((probe) => dirExists(probe));
   });
+  if (detected.length > 0) return ok(detected);
+  return ok([{ id: "claude", agent: "Claude Code", path: fallbackDir }]);
 };
 
-export const materializeSkills = async (connection: Connection): Promise<Result<SkillPullResult[]>> => {
-  const skills = await listEnabledSkills(connection);
+interface PendingTargetWrite {
+  targetIndex: number;
+  targetPath: string;
+  exists: boolean;
+}
+
+export const materializeSkills = async (
+  connection: Connection,
+  options: MaterializeSkillsOptions = {},
+): Promise<Result<SkillTargetPullSummary[]>> => {
+  const targets = resolveSkillTargets(options);
+  if (targets.error) return targets;
+  const deps = options.deps ?? DEFAULT_DEPS;
+
+  const skills = await deps.listEnabledSkills(connection);
   if (skills.error) return skills;
-  const created = attemptSync(() => mkdirSync(SKILLS_TARGET_DIR, { recursive: true }), "STORAGE_FAILED");
-  if (created.error) return created;
-  const localSlugs = listLocalSkillSlugs(SKILL_SOURCES.map((source) => source.path));
-  const plans = skills.data.map((skill) => planSkill(skill, localSlugs));
-  const settled = plans.filter((plan): plan is SkillPullResult => "outcome" in plan);
-  const pending = plans.filter((plan): plan is PendingSkill => !("outcome" in plan));
-  const written: SkillPullResult[] = [];
-  for (const batch of chunk(pending, SKILL_EXPORT_LIMIT)) written.push(...(await writeBatch(connection, batch)));
-  return ok([...settled, ...written]);
+
+  for (const target of targets.data) {
+    const created = attemptSync(() => mkdirSync(target.path, { recursive: true }), "STORAGE_FAILED");
+    if (created.error) return created;
+  }
+
+  const summaries: SkillTargetPullSummary[] = targets.data.map((target) => ({
+    id: target.id,
+    agent: target.agent,
+    path: target.path,
+    results: [],
+  }));
+
+  const pendingBySlug = new Map<string, PendingTargetWrite[]>();
+
+  for (const skill of skills.data) {
+    targets.data.forEach((target, targetIndex) => {
+      const targetPath = insideOf(target.path, skill.slug);
+      if (!targetPath) {
+        summaries[targetIndex]?.results.push({ slug: skill.slug, outcome: "failed", message: "invalid folder name" });
+        return;
+      }
+      const exists = existsSync(targetPath);
+      const marker = exists ? markerOf(targetPath) : null;
+      if (exists && marker === null) {
+        summaries[targetIndex]?.results.push({ slug: skill.slug, outcome: "local" });
+        return;
+      }
+      if (marker === skill.updatedAt) {
+        summaries[targetIndex]?.results.push({ slug: skill.slug, outcome: "unchanged" });
+        return;
+      }
+      const entries = pendingBySlug.get(skill.slug) ?? [];
+      entries.push({ targetIndex, targetPath, exists });
+      pendingBySlug.set(skill.slug, entries);
+    });
+  }
+
+  const pendingSlugs = [...pendingBySlug.keys()];
+  for (const batch of chunk(pendingSlugs, SKILL_EXPORT_LIMIT)) {
+    const exported = await deps.exportSkills(connection, batch);
+    if (exported.error) {
+      for (const slug of batch) {
+        for (const { targetIndex } of pendingBySlug.get(slug) ?? []) {
+          summaries[targetIndex]?.results.push({ slug, outcome: "failed", message: exported.error.message });
+        }
+      }
+      continue;
+    }
+    const bySlug = new Map(exported.data.map((skill) => [skill.slug, skill]));
+    for (const slug of batch) {
+      const full = bySlug.get(slug);
+      for (const { targetIndex, targetPath, exists } of pendingBySlug.get(slug) ?? []) {
+        if (!full) {
+          summaries[targetIndex]?.results.push({
+            slug,
+            outcome: "failed",
+            message: "skill is no longer on the server",
+          });
+          continue;
+        }
+        const written = replaceFolder(targetPath, full);
+        summaries[targetIndex]?.results.push(
+          written.error
+            ? { slug, outcome: "failed", message: written.error.message }
+            : { slug, outcome: exists ? "updated" : "created" },
+        );
+      }
+    }
+  }
+
+  return ok(summaries);
 };

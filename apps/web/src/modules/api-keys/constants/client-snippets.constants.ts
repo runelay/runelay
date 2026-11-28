@@ -30,6 +30,43 @@ export const CLIENT_SNIPPETS = [
       JSON.stringify({ mcpServers: { runelay: { url, headers: { Authorization: `Bearer ${key}` } } } }, null, 2),
   },
   {
+    client: "Gemini",
+    logo: { light: "/logos/gemini.svg", dark: "/logos/gemini.svg" },
+    file: "~/.gemini/settings.json",
+    build: (url: string, key: string) =>
+      JSON.stringify(
+        { mcpServers: { runelay: { url, type: "http", headers: { Authorization: `Bearer ${key}` } } } },
+        null,
+        2,
+      ),
+  },
+  {
+    client: "Antigravity",
+    logo: { light: "/logos/antigravity.svg", dark: "/logos/antigravity.svg" },
+    file: "~/.gemini/config/mcp_config.json",
+    build: (url: string, key: string) =>
+      JSON.stringify(
+        { mcpServers: { runelay: { serverUrl: url, headers: { Authorization: `Bearer ${key}` } } } },
+        null,
+        2,
+      ),
+  },
+  {
+    client: "OpenCode",
+    logo: { light: "/logos/opencode.png", dark: "/logos/opencode.png" },
+    file: "~/.config/opencode/opencode.json",
+    build: (url: string, key: string) =>
+      JSON.stringify(
+        {
+          mcp: {
+            runelay: { type: "remote", url, enabled: true, oauth: false, headers: { Authorization: `Bearer ${key}` } },
+          },
+        },
+        null,
+        2,
+      ),
+  },
+  {
     client: "Todos de uma vez",
     labelKey: "apiKeys.snippets.allClients",
     logo: null,

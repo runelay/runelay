@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### CLI
+
+- `runelay pull` and `runelay sync` now materialize enabled skills across every detected local agent (`~/.claude/skills`, `~/.agents/skills`, `~/.codex/skills`, `~/.cursor/skills`, `~/.grok/skills`, `~/.gemini/skills`, `~/.gemini/config/skills` for Antigravity, and `~/.config/opencode/skills`), fetching each changed skill once in batches while preserving unmanaged local folders per target. Added `--agents` / `-a` and `--skills-dir` filters.
+
+### Web
+
+- Added manual MCP configuration snippets and agent logo matchers for Gemini, Antigravity, and OpenCode in the API Keys dialog and Setup manual agent selector.
+
 ## v0.6.11
 
 ### Web

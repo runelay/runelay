@@ -7,4 +7,7 @@ export const AGENT_LOGO_MATCHERS = [
   { pattern: /codex|openai|chatgpt/i, logo: logoOf("Codex") },
   { pattern: /grok/i, logo: logoOf("Grok") },
   { pattern: /cursor/i, logo: logoOf("Cursor") },
+  { pattern: /gemini/i, logo: logoOf("Gemini") },
+  { pattern: /antigravity/i, logo: logoOf("Antigravity") },
+  { pattern: /opencode/i, logo: logoOf("OpenCode") },
 ];
